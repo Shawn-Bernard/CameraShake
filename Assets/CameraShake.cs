@@ -13,14 +13,9 @@ public class CameraShake : MonoBehaviour
 
     bool timeToShake = false;
 
-    private Vector3 originalPosition;
+    [SerializeField] private Vector3 originalPosition;
     [SerializeField] private float currentDuration;
     private Vector3 velocity = Vector3.zero;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
 
     // Update is called once per frame
     void Update()
@@ -39,6 +34,7 @@ public class CameraShake : MonoBehaviour
 
     void Shake()
     {
+        float distance = (transform.localPosition - originalPosition).magnitude;
         if (currentDuration > 0)
         {
             float xOffset = Mathf.PerlinNoise(0, Time.time * frequency) * 2 - 1;
@@ -48,16 +44,12 @@ public class CameraShake : MonoBehaviour
 
             currentDuration -= Time.deltaTime;
         }
-        else
+        else if (distance < 5f)
         {
-            float distance = (transform.localPosition - originalPosition).sqrMagnitude;
-            if (distance < 0.5)
-            {
-                Vector3 smoothVector = Vector3.SmoothDamp(transform.position, originalPosition, ref velocity, smoothTime);
-                transform.localPosition = smoothVector;
-                timeToShake = false;
-            }
-            
+            Vector3 smoothVector = Vector3.SmoothDamp(transform.position, originalPosition, ref velocity, smoothTime);
+            transform.localPosition = smoothVector;
+            timeToShake = false;
+
         }
     }
 }
